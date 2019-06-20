@@ -77,8 +77,46 @@ class unpack:
    "Source Address": src_addr,
    "Destination Address": dest_addr }
   return data
-  
 
+
+#TCP Header
+def tcp(self, data):
+
+  object=struct.unpack( ' !HHLLBBHHH',data)
+  source_port= object[0]
+  destination_port= object[1]
+  sequence_num= object[2]
+  acknowledge_num= object[3]
+  offset= object[4]
+  tcpFlag= object[5]
+  window= object[6]
+  checksum= object[7]
+  pointer= object[8]
+  data= {"Source Port":source_port,
+   "Destination Port":destination_port,
+   "Sequence Number":sequence_num,
+   "Acknowledge Number":acknowledge_num,
+   "Offset & Reserved":offset,
+   "Tcp Flag":tcpFlag,
+   "Window":window,
+   "CheckSum":checksum,
+   "Urgent Pointer":pointer
+  }
+  retrun data
+
+  # UDP Header 
+ def udp(self, data):
+		
+  object= struct.unpack('!HHHH', data)
+  src_port = object[0]
+  destination_port = object[1]
+  length = object[2]
+  checksum = object[3]
+  data={"Source Port":src_port,
+   "Destination Port":destination_port,
+   "Length":length,
+   "CheckSum":checksum}
+  return data
 
  
 def startSniff():
