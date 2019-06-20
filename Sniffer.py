@@ -81,55 +81,61 @@ class unpack:
 
 
  
+def startSniff():
 
-#create an INET, raw socket
-print('Starting Sniffing Session: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
-from datetime import datetime
-SniffSession = f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
-print (SniffSession)
-SaveFileName = "Sniffing_Session" + SniffSession
-SaveFileName = SaveFileName + ".txt"
-SaveFile = open(SaveFileName, "w+")
-SaveFile.write(SaveFileName)
-SaveFile.write("\n")
-SaveFile.close()
-Listing_Socket =socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0800))
-#create a save file for this session 
-#DateSession = "Sniffer_Session:{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()
+ #create an INET, raw socket
+ 
+ #print('Starting Sniffing Session: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
+ from datetime import datetime
+ SniffSession = f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+ print('Starting Sniffing Session')
+ print (SniffSession)
+ SaveFileName = "Sniffing_Session" + SniffSession
+ SaveFileName = SaveFileName + ".txt"
+ SaveFile = open(SaveFileName, "w+")
+ SaveFile.write(SaveFileName)
+ SaveFile.write("\n")
+ SaveFile.close()
+ Listing_Socket =socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0800))
+ #create a save file for this session 
+ #DateSession = "Sniffer_Session:{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()
+ #receive a packet
 
-# receive a packet
-while True:
+ while True:
 		
-  Incoming_packets= Listing_Socket.recvfrom(65565)
-  unpacker= unpack()
-  printString = "{} : {} |"
+   Incoming_packets= Listing_Socket.recvfrom(65565)
+   unpacker= unpack()
+   printString = "{} : {} |"
 	
-  print("*************ETHERNAET HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
-  SaveFile = open(SaveFileName, "a+")
-  SaveFile.write("*************ETHERNAET HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
-  SaveFile.write("\n")
-  
-  
-  for items in unpacker.ethernet(Incoming_packets[0][0:14]).items(): 
+   print("*************ETHERNAET HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
    SaveFile = open(SaveFileName, "a+")
-   x,y = items 
-   SaveFile.write(printString.format(x,y))
-   print (printString.format(x,y))
+   SaveFile.write("*************ETHERNAET HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
    SaveFile.write("\n")
-   SaveFile.close()
+  
+  
+   for items in unpacker.ethernet(Incoming_packets[0][0:14]).items(): 
+    SaveFile = open(SaveFileName, "a+")
+    x,y = items 
+    SaveFile.write(printString.format(x,y))
+    print (printString.format(x,y))
+    SaveFile.write("\n")
+    SaveFile.close()
   
 
-  print("*************IP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
-  SaveFile = open(SaveFileName, "a+")
-  SaveFile.write("*************IP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
-  SaveFile.write("\n")
-  for items in unpacker.ipHeader(Incoming_packets[0][14:34]).items():  
+   print("*************IP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
    SaveFile = open(SaveFileName, "a+")
-   x,y = items 
-   SaveFile.write(printString.format(x,y))
-   print (printString.format(x,y))
+   SaveFile.write("*************IP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
    SaveFile.write("\n")
-   SaveFile.close()
+   for items in unpacker.ipHeader(Incoming_packets[0][14:34]).items():  
+    SaveFile = open(SaveFileName, "a+")
+    x,y = items 
+    SaveFile.write(printString.format(x,y))
+    print (printString.format(x,y))
+    SaveFile.write("\n")
+    SaveFile.close()
+
+startSniff()
+
  
 
   
