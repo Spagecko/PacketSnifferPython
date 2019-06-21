@@ -102,7 +102,7 @@ def tcp(self, data):
    "CheckSum":checksum,
    "Urgent Pointer":pointer
   }
-  retrun data
+  return data
 
   # UDP Header 
  def udp(self, data):
