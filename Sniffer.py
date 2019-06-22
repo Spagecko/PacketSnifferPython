@@ -8,10 +8,7 @@ import re, uuid
 from uuid import getnode as get_mac
 import datetime
 
-def formatMacAddr(macAddr):
- NewmacAddr = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(macAddr[0]), ord(macAddr[1]), ord(macAddr[2]), ord(macAddr[3]), ord(macAddr[4]) , ord(macAddr[5]))
- return NewmacAddr
- 
+
 class unpack: 
 
  def __cinit__(self): 
@@ -21,13 +18,9 @@ class unpack:
  def ethernet(self, data): 
    store=data
    store=struct.unpack("!6s6sH",store)
-   #print (store)
-   #dest_mac=binascii.hexlify(store[0])
    dest_mac=store[0]
-   #dest_mac = get_mac()
-   #des_mac = formatMacAddr(dest_mac)
-   #src_mac=binascii.hexlify(store[1])
    src_mac=binascii = store[1]
+
    ethernet_protocol=store[2]
    data={"Dest_Mac_addr":dest_mac,
    "Src_Mac_addr" :src_mac, 
@@ -79,10 +72,10 @@ class unpack:
   return data
 
 
-#TCP Header
-def tcp(self, data):
+# TCP Header
+ def tcp(self, data):
 
-  object=struct.unpack( ' !HHLLBBHHH',data)
+  object=struct.unpack( '!HHLLBBHHH',data)
   source_port= object[0]
   destination_port= object[1]
   sequence_num= object[2]
@@ -92,6 +85,13 @@ def tcp(self, data):
   window= object[6]
   checksum= object[7]
   pointer= object[8]
+  print("SRC PORT" , source_port)
+  print("DEST PORT" , destination_port)
+  print("Seq Number" , sequence_num)
+  print("ACK_NUMBER", acknowledge_num)
+  print("Offset" , offset)
+  print("Flag", tcpFlag)
+ 
   data= {"Source Port":source_port,
    "Destination Port":destination_port,
    "Sequence Number":sequence_num,
@@ -104,23 +104,12 @@ def tcp(self, data):
   }
   return data
 
-  # UDP Header 
- def udp(self, data):
-		
-  object= struct.unpack('!HHHH', data)
-  src_port = object[0]
-  destination_port = object[1]
-  length = object[2]
-  checksum = object[3]
-  data={"Source Port":src_port,
-   "Destination Port":destination_port,
-   "Length":length,
-   "CheckSum":checksum}
-  return data
 
- 
+
 def startSniff():
-
+ #create an INET, raw socket
+ 
+ 
  #create an INET, raw socket
  
  #print('Starting Sniffing Session: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
@@ -137,8 +126,7 @@ def startSniff():
  Listing_Socket =socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0800))
  #create a save file for this session 
  #DateSession = "Sniffer_Session:{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()
- #receive a packet
-
+#receive a packet
  while True:
 		
    Incoming_packets= Listing_Socket.recvfrom(65565)
@@ -171,6 +159,24 @@ def startSniff():
     print (printString.format(x,y))
     SaveFile.write("\n")
     SaveFile.close()
+    
+    
+   print("*************TCP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
+   SaveFile = open(SaveFileName, "a+")
+   SaveFile.write("*************TCP HEADER**********************" + 'TIMESTAMP: {:%Y-%m-%d %H:%M:%S}'.format(datetime.now()))
+   SaveFile.write("\n")
+   for items in unpacker.tcp(Incoming_packets[0][34:54]).items():  
+    SaveFile = open(SaveFileName, "a+")
+    x,y = items 
+    SaveFile.write(printString.format(x,y))
+    print (printString.format(x,y))
+    SaveFile.write("\n")
+    SaveFile.close()
+
+
+
+
+    
 
 startSniff()
 
